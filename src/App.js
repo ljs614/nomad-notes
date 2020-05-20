@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { Component } from 'react';
+// import { Query } from "react-apollo"
+// import { GET_NOTES } from "./queries"
 
-function App() {
-  return (
-    <div className="App">
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        {/* <Query query={GET_NOTES}>{() => null}</Query> */}
+      </div>
+    );
+  }
 }
 
 export default App;
