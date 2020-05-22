@@ -15,7 +15,8 @@ const stateLink = withClientState({
 
 const client = new ApolloClient({
     cache,
-    link: ApolloLink.from([stateLink])
+    link: ApolloLink.from([stateLink]),
+    resolvers,
 });
 
 export default client;

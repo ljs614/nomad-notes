@@ -7,35 +7,36 @@ export const defaults = {
             __typename: "Note",
             id: 1,
             title: "First",
-            content: "haha"
+            content: "- haha"
         }
     ]
 };
 export const typeDefs = [
     `
-    extend schema {
-        mutation: Mutation
-    }
-    extend type Query {
-        notes: [Note]!
-        note(id: Int!): Note
-    }
-    type Mutation {
-        createNote(title: String!, content: String!): Note
-        editNote(id: Int!, title: String, content:String): Note
-    }
-    type Note {
-        id: Int!
-        title: String!
-        content: String!
-    }
-    `
-];
+      schema {
+          query: Query
+          mutation: Mutation
+      }
+      type Query {
+          notes: [Note]!
+          note(id: Int!): Note
+      }
+      type Mutation{
+          createNote(title: String!, content: String!): Note
+          editNote(id: Int!, title: String, content:String): Note
+      }
+      type Note{
+          id: Int!
+          title: String!
+          content: String!
+      }
+      `
+  ];
 export const resolvers = {
     Mutation: {
         createNote: (_, variables, { cache }) => {
             const { notes } = cache.readQuery({ query: GET_NOTES});
-            const { title, content } = variables
+            const { title, content } = variables;
             const newNote = {
                 __typename: "Note",
                 title,
