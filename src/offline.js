@@ -10,7 +10,7 @@ export const saveNotes = cache => {
     }
 }
 
-export const resotreNotes = cache => {
+export const resotreNotes = () => {
     const notes = localStorage.getItem("notes");
     if(notes){
         try{

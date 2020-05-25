@@ -1,5 +1,5 @@
 import { NOTE_FRAGMENT } from "./fragments";
-import { GET_NOTES } from "./queries";
+import { GET_NOTES, GET_NOTE } from "./queries";
 import { saveNotes, resotreNotes } from "./offline";
 
 export const defaults = {
@@ -18,6 +18,7 @@ export const typeDefs = [
       type Mutation{
           createNote(title: String!, content: String!): Note
           editNote(id: Int!, title: String, content:String): Note
+          deleteNote(id: Int!): Note
       }
       type Note{
           id: Int!
@@ -64,6 +65,19 @@ export const resolvers = {
             saveNotes(cache)
             return updateNote;
 
+        },
+        deleteNote: (_, {id}, { cache }) => {
+            const { notes } = cache.readQuery({ query: GET_NOTES});
+            const { note } = cache.readQuery({query: GET_NOTE, variables:{id}})
+            const delIndex = notes.findIndex(i => i.id === note.id);
+            notes.splice(delIndex,1);
+            cache.writeData({
+                data: {
+                    notes: [...notes]
+                }
+            });
+            saveNotes(cache);
+            return note;
         }
     },
     Query: {

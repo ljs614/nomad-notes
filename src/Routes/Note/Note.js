@@ -1,9 +1,19 @@
 import React from "react"
 import { Link } from "react-router-dom";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import styled from "styled-components";
 import MarkdownRenderer from "react-markdown-renderer";
 import { GET_NOTE } from "../../queries";
+import gql from "graphql-tag";
+
+
+export const DELETE_NOTE = gql`
+    mutation deleteNote($id: Int!) {
+        deleteNote(id: $id) @client {
+            id
+        }
+    }
+`;
 
 const TitleComponent = styled.div`
   display: flex;
@@ -18,10 +28,10 @@ const Title = styled.h1`
   padding: 0;
 `;
 
-const Button = styled.button``;
-
-
-
+const Buttons = styled.div``;
+const Button = styled.button`
+  margin-left: 10px;
+`;
 
 export default class Note extends React.Component{
     render() {
@@ -32,21 +42,38 @@ export default class Note extends React.Component{
           } = this.props;
         return (
         <Query query={GET_NOTE} variables={{ id }}>
-            {({ data }) =>
-            data?.note ? (
-                <>
+            {({ data }) => data?.note ? (
+              <>
                 <TitleComponent>
-                    <Title>{data.note && data.note.title}</Title>
+                  <Title>{data.note && data.note.title}</Title>
+                  <Buttons>
                     <Link to={`/edit/${data.note.id}`}>
-                    <Button>Edit</Button>
+                      <Button>Edit</Button>
                     </Link>
+                    <Mutation mutation={DELETE_NOTE}>
+                      {deleteNote => {
+                        this.deleteNote = deleteNote;
+                        return (
+                          <Button onClick={this._onDelete}>Del</Button>
+                        );
+                      }}
+                    </Mutation>
+                  </Buttons>
                 </TitleComponent>
                 <MarkdownRenderer markdown={data.note.content} />
-                </>
+              </>
+
             ) : null
             }
         </Query>
         );
+    }
+    _onDelete = () =>{
+      const {history: {push}, match:{params:{id}}} = this.props;
+      if(id){
+        this.deleteNote({variables: {id}});
+        push("/");
+      }
     }
 
 }
